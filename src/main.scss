@@ -1,0 +1,24 @@
+
+$primary: rgb(243, 109, 14);
+$gray: 	#b5b6be;
+
+@import "../node_modules/bootstrap/scss/bootstrap";
+
+
+.navbar {
+    padding: 0.25rem 0.25rem;
+}
+.nav-item{
+    margin-right: 20px;
+}
+
+.gen-border{
+    border-bottom: 1px solid $primary;
+    margin-bottom: 40px;
+}
+p{
+    margin-top: 20px;
+}
+.card-title{
+    color: $primary;
+}

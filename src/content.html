@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- Bootstrap CSS -->
+    <link href="main.css" rel="stylesheet" />
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+
+    <title>Exercises</title>
+    <link rel="shortcut icon" type="image/x-icon" href="./assets/GLogo.png" />
+  </head>
+
+  <body>
+    <div id="navbar"></div>
+    <script src="navbar.js"></script>
+
+    <div class="container mt-4">
+      <div id="exercise-content">Loading content...</div>
+    </div>
+
+    <script>
+      // Get content ID from URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const exerciseId = urlParams.get("id");
+
+      // === CONTENT DATABASE ===
+      const contentDatabase = {
+        daserstedate: {
+          title: "Das Erste Date | A1",
+          audioSrc:
+            "https://germanlistening.com/upload/short-stories/the-first-date-2022-06-13-21-16-00/0-the-first-date.mp3",
+          subsections: [
+            { start: 3, end: 5.5, text: "Ich habe einen Mann kennengelernt" },
+            { start: 5.5, end: 8, text: "Ich kenne ihn noch nicht gut" },
+            { start: 8, end: 10.2, text: "Sein Name ist Olaf" },
+            { start: 10.2, end: 14.5, text: "Er sieht gut aus und ist nett" },
+            { start: 14.5, end: 17.2, text: "Wir haben uns verabredet" },
+            {
+              start: 17.2,
+              end: 21.2,
+              text: "Am Samstag gehen wir zusammen abendessen",
+            },
+            { start: 21.2, end: 24, text: "Ich trage ein schönes Kleid" },
+            { start: 24, end: 28, text: "Olaf hat sich auch schick angezogen" },
+            { start: 28, end: 30, text: "Er holt mich zu Hause ab" },
+            { start: 30, end: 32.5, text: "Ich bin sehr nervös" },
+            { start: 32.5, end: 36, text: "Er hat das Restaurant ausgesucht" },
+            {
+              start: 36,
+              end: 40,
+              text: "Dort essen wir Pizza und trinken Wein",
+            },
+            { start: 40, end: 43, text: "Olaf erzählt mir von seinen Hobbys" },
+            {
+              start: 43,
+              end: 46.5,
+              text: "Er wandert gerne und spielt Klavier",
+            },
+            { start: 46.5, end: 50, text: "Ich erzähle ihm von meiner Katze" },
+            { start: 50, end: 52, text: "Olaf mag Katzen" },
+            { start: 52, end: 54, text: "Das finde ich gut" },
+            { start: 54, end: 56, text: "Wir lachen viel" },
+            { start: 56, end: 59, text: "Wir haben viele Gemeinsamkeiten" },
+            { start: 59, end: 62, text: "Wir bestellen Nachtisch" },
+            { start: 62, end: 65, text: "Olaf teilt sein Eis mit mir" },
+            {
+              start: 65,
+              end: 68.5,
+              text: "Der Kellner bringt uns die Rechnung",
+            },
+            { start: 68.5, end: 71, text: "Ich bezahle für uns" },
+            { start: 71, end: 73.5, text: "Olaf bringt mich nach Hause" },
+            { start: 73.5, end: 76, text: "Er begleitet mich zur Tür" },
+            { start: 76, end: 80, text: "Ich wünsche ihm eine gute Nacht" },
+            { start: 80, end: 82, text: "Wir küssen uns" },
+            { start: 82.5, end: 85, text: "Ich bin wirklich glücklich" },
+          ],
+        },
+        geburtstag: {
+          title: "Geburtstag | A1",
+          audioSrc:
+            "https://germanlistening.com/upload/short-stories/happy-birthday-2022-06-05-21-54-45/0-happy-birthday.mp3",
+          subsections: [
+            { start: 2, end: 5, text: "Paul hat heute Geburtstag" },
+            { start: 5, end: 7.5, text: "Er wird dreißig Jahre alt" },
+            {
+              start: 7.5,
+              end: 10.5,
+              text: "Seine Freunde wollen mit ihm feiern",
+            },
+            {
+              start: 10.5,
+              end: 14,
+              text: "Paul hat sie zu sich nach Hause eingeladen.",
+            },
+          ],
+        },
+      };
+
+      // === RENDER CONTENT ===
+      const exercise = contentDatabase[exerciseId];
+      if (exercise) {
+        document.title = exercise.title;
+        document.getElementById("exercise-content").innerHTML = `
+          <b>${exercise.title}</b>
+
+          <div class="d-flex align-items-center">
+            <button id="prevBtn" class="btn btn-sm border-0" style="font-size: 2rem;">
+              ←
+            </button>  
+            <p id="status" class="text-muted"></p>
+            <button id="nextBtn" class="btn btn-sm border-0" style="font-size: 2rem;">
+              →
+            </button>  
+          </div>
+
+
+          <audio id="audioPlayer" controls class="w-50">
+            <source src="${exercise.audioSrc}" type="audio/mpeg">
+            Your browser does not support the audio element.
+          </audio>
+
+          <div class="input-group mt-3">
+            <textarea class="form-control" id="userInput" placeholder="Type what you hear..."></textarea>
+          </div>
+
+          <div class="mt-2">
+            <button id="repeatBtn" class="btn btn-warning me-2">Repeat</button>
+            <button id="checkBtn" class="btn btn-success me-2">Check</button>
+          </div>
+          
+
+          <div id="revealBox" class="form-check mt-2" style="display:none;">
+              <input class="form-check-input" type="checkbox" id="revealCheck">
+              <label class="form-check-label" for="revealCheck">Show answer</label>
+              <p id="feedback"></p>
+              <p id="revealText" class="text-info" style="display:none;"></p>
+          </div>
+        `;
+        initAudioPlayer(exercise.subsections);
+      } else {
+        document.getElementById("exercise-content").innerHTML = `
+          <h3>Exercise Not Found, Coming soon...</h3>
+        `;
+      }
+
+      // === REUSABLE AUDIO PLAYER ===
+      function initAudioPlayer(subsections) {
+        const audio = document.getElementById("audioPlayer");
+        const status = document.getElementById("status");
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+        const repeatBtn = document.getElementById("repeatBtn");
+
+        const userInput = document.getElementById("userInput");
+        const checkBtn = document.getElementById("checkBtn");
+        const feedback = document.getElementById("feedback");
+        const revealCheck = document.getElementById("revealCheck");
+        const revealText = document.getElementById("revealText");
+
+        let currentIndex = 0;
+        let timeUpdateHandler = null;
+
+        // Normalize text (ignore case, punctuation, symbols)
+        function normalize(text) {
+          return text
+            .toLowerCase()
+            .replace(/[^\p{L}\p{N}\s]/gu, "") // remove punctuation/symbols
+            .trim();
+        }
+
+        // Compare and highlight partial mistakes
+        function compareText(expected, actual) {
+          const expWords = normalize(expected).split(/\s+/);
+          const actWords = normalize(actual).split(/\s+/);
+
+          let highlighted = [];
+          for (let i = 0; i < expWords.length; i++) {
+            if (expWords[i] === actWords[i]) {
+              highlighted.push(expWords[i]);
+            } else {
+              if (actWords[i]) {
+                // Mark wrong word with *
+                let hint = "";
+                for (let j = 0; j < expWords[i].length; j++) {
+                  hint +=
+                    expWords[i][j] === (actWords[i][j] || "")
+                      ? expWords[i][j]
+                      : "*";
+                }
+                highlighted.push(hint);
+              } else {
+                let str = "*";
+                let multiplied = str.repeat(expWords[i].length);
+                highlighted.push(multiplied);
+              }
+            }
+          }
+          return highlighted.join(" ");
+        }
+
+        function playSubsection(index) {
+          if (!subsections[index]) return;
+          const { start, end, text } = subsections[index];
+
+          if (timeUpdateHandler) {
+            audio.removeEventListener("timeupdate", timeUpdateHandler);
+          }
+
+          audio.currentTime = start;
+          audio.play();
+
+          status.textContent = ` ${index + 1} / ${subsections.length}`;
+
+          timeUpdateHandler = () => {
+            if (audio.currentTime >= end) {
+              audio.pause();
+            }
+          };
+
+          audio.addEventListener("timeupdate", timeUpdateHandler);
+
+          // Reset editor for new subsection
+          feedback.textContent = "";
+          revealCheck.checked = false;
+          revealText.style.display = "none";
+          document.getElementById("revealBox").style.display = "none";
+        }
+
+        // Button controls
+        nextBtn.addEventListener("click", () => {
+          userInput.value = "";
+          currentIndex = (currentIndex + 1) % subsections.length;
+          playSubsection(currentIndex);
+        });
+
+        prevBtn.addEventListener("click", () => {
+          currentIndex =
+            (currentIndex - 1 + subsections.length) % subsections.length;
+          playSubsection(currentIndex);
+        });
+
+        repeatBtn.addEventListener("click", () => {
+          playSubsection(currentIndex);
+        });
+
+        // Keyboard shortcut
+        document.addEventListener("keydown", (event) => {
+          if (event.ctrlKey) {
+            event.preventDefault();
+            playSubsection(currentIndex);
+          }
+        });
+
+        // Check user input
+        function checkAnswer() {
+          const actual = userInput.value;
+          const expected = subsections[currentIndex].text;
+
+          if (normalize(actual) === normalize(expected)) {
+            feedback.textContent = "✅ You are correct!";
+            feedback.className = "text-success fw-bold";
+
+            revealText.style.display = "none";
+          } else {
+            feedback.textContent = "❌ Incorrect";
+            feedback.className = "text-danger fw-bold";
+
+            // Show partial hints
+            const hint = compareText(expected, actual);
+            revealText.textContent = "Hint: " + hint;
+            revealText.style.display = "block";
+
+            document.getElementById("revealBox").style.display = "block";
+          }
+        }
+
+        // Button click
+        checkBtn.addEventListener("click", checkAnswer);
+
+        // Press Enter in input
+        userInput.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            checkAnswer();
+          }
+        });
+
+        // Reveal checkbox
+        revealCheck.addEventListener("change", () => {
+          if (revealCheck.checked) {
+            revealText.textContent =
+              "Correct: " + subsections[currentIndex].text;
+            revealText.style.display = "block";
+          } else {
+            revealText.style.display = "none";
+          }
+        });
+
+        // Start with the first subsection
+        playSubsection(currentIndex);
+      }
+    </script>
+  </body>
+</html>
