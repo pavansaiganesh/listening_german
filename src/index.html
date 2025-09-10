@@ -11,8 +11,11 @@
 
     <!-- Bootstrap CSS, JS -->
     <link href="main.css" rel="stylesheet" />
-    <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
-
+    <!--<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script> -->
+    <!-- only add above line when you have node modules folder installed in your local machine but since im deploying
+     this github file into netlify, adding node modules takes huge space, the css of bootstrap elements will appear
+     but not their functionality, so add a script line in body tag-->
+    
     <title>Listening German</title>
     <link rel="shortcut icon" type="image/x-icon" href="./assets/GLogo.png" />
   </head>
@@ -88,5 +91,10 @@
         <a href="https://github.com/pavansaiganesh" target="_blank">Pavan_Sai</a>
         , India</small>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
+        crossorigin="anonymous"></script>
+
   </body>
 </html>
+
